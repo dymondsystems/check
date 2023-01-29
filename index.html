@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  margin: 20px 0;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+input[type="text"] {
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  width: 60%;
+}
+
+button[type="button"] {
+  width: 20%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  width: 80%;
+  margin: 20px auto;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+li input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+li.completed {
+  text-decoration: line-through;
+  color: #ccc;
+}
+
+</style>
+<html>
+  <head>
+    <title>Simple Checklist App</title>
+  </head>
+  <body>
+    <h1>Simple Checklist App</h1>
+    <form>
+      <input type="text" id="input-task" placeholder="Add a task">
+      <button type="button" id="add-task">Add Task</button>
+    </form>
+    <ul id="task-list"></ul>
+    <script src="app.js"></script>
+  </body>
+</html>
+
+<script>
+// Get references to the form elements
+const inputTask = document.getElementById("input-task");
+const addTaskButton = document.getElementById("add-task");
+const taskList = document.getElementById("task-list");
+
+// Add event listener to the add task button
+addTaskButton.addEventListener("click", function() {
+  // Get the task text
+  const taskText = inputTask.value;
+
+  // Create a new list item
+  const newTask = document.createElement("li");
+  newTask.innerHTML = taskText;
+
+  // Create a new checkbox and add it to the list item
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  newTask.prepend(checkbox);
+
+  // Add the new task to the task list
+  taskList.appendChild(newTask);
+
+  // Clear the input field
+  inputTask.value = "";
+});
+
+</script>
+
+<script>
+// Get references to the form elements
+const inputTask = document.getElementById("input-task");
+const addTaskButton = document.getElementById("add-task");
+const taskList = document.getElementById("task-list");
+
+// Check for existing tasks in cookies
+if (getCookie("tasks")) {
+  // If tasks found in cookies, load them into the task list
+  taskList.innerHTML = getCookie("tasks");
+}
+
+// Add event listener to the add task button
+addTaskButton.addEventListener("click", function() {
+  // Get the task text
+  const taskText = inputTask.value;
+
+  // Create a new list item
+  const newTask = document.createElement("li");
+  newTask.innerHTML = taskText;
+
+  // Create a new checkbox and add it to the list item
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  newTask.prepend(checkbox);
+
+  // Add the new task to the task list
+  taskList.appendChild(newTask);
+
+  // Clear the input field
+  inputTask.value = "";
+
+  // Save the current task list to cookies
+  setCookie("tasks", taskList.innerHTML, 365);
+});
+
+// Add event listener to the checkboxes to handle completed tasks
+taskList.addEventListener("change", function(e) {
+  if (e.target.tagName === "INPUT") {
+    e.target.parentNode.classList.toggle("completed");
+    setCookie("tasks", taskList.innerHTML, 365);
+  }
+});
+
+// Function to set cookies
+function setCookie(name, value, days) {
+  let expires = "";
+  if (days) {
+    let date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+// Function to get cookies
+function getCookie(name) {
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+</script>
